@@ -20,7 +20,10 @@ const HomeSectionCarousel = ({data, sectionName}) => {
 
   const items = data
     .slice(0, 10)
-    .map((item) => <HomeSectionCard product={item} />);
+    .map((item) => <HomeSectionCard product={item} />); 
+
+
+    debugger
   return (
     <div className="border">
     <h2 className="text-2xl font-extrabold text-gray-800 py-5">{sectionName}</h2>
@@ -37,7 +40,7 @@ const HomeSectionCarousel = ({data, sectionName}) => {
           <Button
             variant="contained"
             className="z-50 bg-white"
-            onClick={slideNext}
+            onClick={()=>slideNext()}
             sx={{
               position: "absolute",
               top: "8rem",
@@ -56,7 +59,8 @@ const HomeSectionCarousel = ({data, sectionName}) => {
           <Button
             variant="contained"
             className="z-50 bg-white"
-            onClick={slidePrev}
+             onClick={()=>slidePrev()}
+            // onClick={slidePrev}
             sx={{
               position: "absolute",
               top: "8rem",
