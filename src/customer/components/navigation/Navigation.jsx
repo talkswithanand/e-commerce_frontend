@@ -10,12 +10,14 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Avatar, Button, Menu, MenuItem } from "@mui/material";
 import { navigation } from "../navigation/navigationData";
-import AuthModal from "../Auth/AuthModal";
-import { useDispatch, useSelector } from "react-redux";
+// import AuthModal from "../Auth/AuthModal";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { deepPurple } from "@mui/material/colors";
-import { getUser, logout } from "../../../Redux/Auth/Action";
-import { getCart } from "../../../Redux/Customers/Cart/Action";
+// import { getUser, logout } from "../../../Redux/Auth/Action";
+// import { getCart } from "../../../Redux/Customers/Cart/Action";
 import TextField from "@mui/material/TextField";
+import AuthModal from "../../auth/AuthModal";
+import { getUser, logout } from "../../../State/Auth/Action";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -32,12 +34,12 @@ export default function Navigation() {
   const jwt = localStorage.getItem("jwt");
   const location = useLocation();
 
-  useEffect(() => {
-    if (jwt) {
-      dispatch(getUser(jwt));
-      dispatch(getCart(jwt));
-    }
-  }, [jwt]);
+  // useEffect(() => {
+  //   if (jwt) {
+  //     dispatch(getUser(jwt));
+  //     dispatch(getCart(jwt));
+  //   }
+  // }, [jwt]);
 
   const handleUserClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -59,6 +61,12 @@ export default function Navigation() {
   };
 
   useEffect(() => {
+    if (jwt) {
+      dispatch(getUser(jwt));
+    }
+  }, [jwt, auth.jwt]);
+
+  useEffect(() => {
     if (auth.user) {
       handleClose();
     }
@@ -68,8 +76,8 @@ export default function Navigation() {
   }, [auth.user]);
 
   const handleLogout = () => {
-    handleCloseUserMenu();
     dispatch(logout());
+    handleCloseUserMenu();
   };
   const handleMyOrderClick = () => {
     handleCloseUserMenu();
@@ -250,7 +258,7 @@ export default function Navigation() {
           Get free delivery on orders over ₹100
         </p>
 
-        <nav aria-label="Top" className="mx-auto"> 
+        <nav aria-label="Top" className="mx-auto">
           <div className="border-b border-gray-200">
             <div className="flex h-16 items-center px-11">
               <button
@@ -408,7 +416,7 @@ export default function Navigation() {
 
               <div className="ml-auto flex items-center">
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
-                  {auth.user ? (
+                  {auth.user?.firstName ? (
                     <div>
                       <Avatar
                         className="text-white"
@@ -443,7 +451,7 @@ export default function Navigation() {
                           "aria-labelledby": "basic-button",
                         }}
                       >
-                        <MenuItem onClick={()=>navigate("/account/order")}>
+                        <MenuItem onClick={() => navigate("/account/order")}>
                           My Orders
                         </MenuItem>
                         <MenuItem onClick={handleLogout}>Logout</MenuItem>
@@ -461,10 +469,12 @@ export default function Navigation() {
 
                 {/* Search */}
                 <div className="flex items-center lg:ml-6">
-                
-                  <p onClick={()=>navigate("/products/search")} className="p-2 text-gray-400 hover:text-gray-500">
+                  <p
+                    onClick={() => navigate("/products/search")}
+                    className="p-2 text-gray-400 hover:text-gray-500"
+                  >
                     <span className="sr-only">Search</span>
-                    
+
                     <MagnifyingGlassIcon
                       className="h-6 w-6"
                       aria-hidden="true"
