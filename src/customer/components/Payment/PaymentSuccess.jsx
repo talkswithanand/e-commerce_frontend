@@ -6,6 +6,7 @@ import { updatePayment } from "../../../State/Payment/Action";
 import { getOrderById } from "../../../State/Order/Action";
 import { Alert, AlertTitle, Grid } from "@mui/material";
 import { OrderTracker } from "../Order/OrderTracker";
+import AddressCard from "../AddressCard/AddressCard";
 
 const PaymentSuccess = () => {
   const [paymentId, setPaymentId] = useState();
@@ -20,16 +21,18 @@ const PaymentSuccess = () => {
   const order = useSelector((store) => store);
   useEffect(() => {
     const urlParam = new URLSearchParams(window.location.search);
-    setPaymentId(urlParam.get("razorpay_payment_link_id"));
+    setPaymentId(urlParam.get("razorpay_payment_id"));
     setPaymentStatus(urlParam.get("razorpay_payment_link_status"));
   }, []);
 
   useEffect(() => {
-    const data = [orderId, paymentId];
+    if (paymentId) {
+      const data = [orderId, paymentId];
 
-    dispatch(getOrderById(orderId));
+      dispatch(getOrderById(orderId));
 
-    dispatch(updatePayment(data));
+      dispatch(updatePayment(data));
+    }
   }, [orderId, paymentId]);
 
   return (
@@ -48,7 +51,7 @@ const PaymentSuccess = () => {
       <OrderTracker activeStep={1} />
 
       <Grid container className="space-y-5 py-5 pt-20">
-        {order.order?.orderItems.map((item) => (
+        {order.order.orderItems.map((item) => (
           <Grid
             container
             item
@@ -59,15 +62,22 @@ const PaymentSuccess = () => {
               <div className="flex items-center">
                 <img
                   className="w-[5rem] h-[5rem] object-cover object-top"
-                  src="https://
-rukminim1.flixcart.com/image/612/612/xif0q/kurta/x/f/6/
-xxl-new-white-nofilter-original-imaghzggudfezpr8.jpeg?q=70"
+                  src={item.product.imageUrl}
                   alt=""
                 />
-                <div>
+                <div className="ml-5 space-y-2">
                   <p>{item.product.title}</p>
+                  <div className="opacity-50 text-xs font-semibold space-x-5">
+                    <span>Color: {item.color}</span>
+                    <span>Size: {item.size}</span>
+                  </div>
+                  <p>Seller: {item.product.brand}</p>
+                  <p>₹ {item.price}</p>
                 </div>
               </div>
+            </Grid>
+            <Grid item>
+              <AddressCard address={order.order?.shippingAddress} />
             </Grid>
           </Grid>
         ))}
